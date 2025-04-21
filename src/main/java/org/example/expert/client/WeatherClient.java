@@ -25,15 +25,17 @@ public class WeatherClient {
     public String getTodayWeather() {
         ResponseEntity<WeatherDto[]> responseEntity =
                 restTemplate.getForEntity(buildWeatherApiUri(), WeatherDto[].class);
-
+        // 중복된 else 문 제거로 조건 만족 시 즉시 예외 발생 및 가독성 개선
         WeatherDto[] weatherArray = responseEntity.getBody();
+
         if (!HttpStatus.OK.equals(responseEntity.getStatusCode())) {
             throw new ServerException("날씨 데이터를 가져오는데 실패했습니다. 상태 코드: " + responseEntity.getStatusCode());
-        } else {
-            if (weatherArray == null || weatherArray.length == 0) {
-                throw new ServerException("날씨 데이터가 없습니다.");
-            }
         }
+
+        if (weatherArray == null || weatherArray.length == 0) {
+            throw new ServerException("날씨 데이터가 없습니다.");
+        }
+
 
         String today = getCurrentDate();
 
